@@ -28,6 +28,7 @@ const Home: React.FC = () => {
     );
   };
 
+  // Allow user to re-center the map
   const recenterMap = async (): Promise<void> => {
     // Alert user location is being fetched
     toast.show({
