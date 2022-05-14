@@ -3,6 +3,7 @@ import {Icon, NativeBaseProvider} from 'native-base';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import {Button} from './src/constants/theme';
 
 // Import screens
 import {RootTabParamList} from './src/routes/RootTabParamList';
@@ -31,8 +32,8 @@ const App: React.FC = () => {
                 <Icon as={Ionicon} name={iconName} color={color} size={size} />
               );
             },
-            tabBarActiveTintColor: '#0284c7',
-            tabBarInactiveTintColor: '#a8a29e',
+            tabBarActiveTintColor: Button.Primary,
+            tabBarInactiveTintColor: Button.Muted,
           })}>
           <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="Info" component={InfoScreen} />
