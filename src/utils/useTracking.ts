@@ -89,6 +89,7 @@ const useTracking = (isActive: boolean) => {
         console.log('Task started...');
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
+        console.log('Task ended.');
       });
     });
 
@@ -99,6 +100,7 @@ const useTracking = (isActive: boolean) => {
 
     BackgroundGeolocation.on('error', err => {
       // Handle errors here
+      console.error('BackgroundGeolocation encountered an error');
       console.error(err);
     });
 
@@ -110,6 +112,7 @@ const useTracking = (isActive: boolean) => {
       console.log('[INFO]: ', 'BackgroundGeolocation service has stopped');
     });
 
+    // TODO: Prompts user every time app is launched
     BackgroundGeolocation.on('authorization', status => {
       console.log(
         '[INFO]: ',
@@ -132,8 +135,8 @@ const useTracking = (isActive: boolean) => {
                 style: 'cancel',
               },
             ],
-          ),
-            1000;
+          );
+          1000;
         });
       }
     });

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Center, Fab, Icon, useToast} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Map from '../../components/Map';
@@ -12,10 +12,11 @@ import {setOrigin} from '../../redux/reducers/locationSlice';
 import useTracking from '../../utils/useTracking';
 
 const Home: React.FC = () => {
+  const [trackLocation, toggleTracking] = useState<boolean>(false);
   const toast = useToast();
   const origin = useAppSelector(state => state.location.origin);
   const dispatch = useAppDispatch();
-  const {location} = useTracking(true);
+  const {location} = useTracking(trackLocation);
 
   useEffect(() => {
     setCurrentLocation();
@@ -35,6 +36,8 @@ const Home: React.FC = () => {
 
   // Allow user to re-center the map
   const recenterMap = async (): Promise<void> => {
+    // TODO: Remove later
+    toggleTracking(!trackLocation);
     // Alert user location is being fetched
     toast.show({
       title: 'Fetching current location',
