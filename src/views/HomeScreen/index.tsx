@@ -16,31 +16,40 @@ const Home: React.FC = () => {
   const toast = useToast();
   const origin = useAppSelector(state => state.location.origin);
   const dispatch = useAppDispatch();
-  const {location} = useTracking(trackLocation);
+  const {location, history} = useTracking(trackLocation);
 
   useEffect(() => {
     setCurrentLocation();
-    console.log(location);
+    // console.log(location);
+    console.log('[REDUX]: ', origin);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [history]);
 
   // Fetch and set user's current location
   const setCurrentLocation = async (): Promise<void> => {
     // Get current location
-    const current = {latitude: 123, longitude: 456};
+    const current = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    };
     // Set current location in Redux
     dispatch(
       setOrigin({latitude: current.latitude, longitude: current.longitude}),
     );
   };
 
-  // Allow user to re-center the map
+  // TODO: Allow user to re-center the map
   const recenterMap = async (): Promise<void> => {
     // TODO: Remove later
-    toggleTracking(!trackLocation);
+    const enabled = !trackLocation;
+    toggleTracking(enabled);
     // Alert user location is being fetched
+    // toast.show({
+    //   title: 'Fetching current location',
+    //   placement: 'top',
+    // });
     toast.show({
-      title: 'Fetching current location',
+      title: `Background Location: ${enabled ? 'Enabled' : 'Disabled'}`,
       placement: 'top',
     });
     // Recenter map
