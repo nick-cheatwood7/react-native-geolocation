@@ -14,7 +14,6 @@ const InfoScreen = () => {
   }, []);
 
   const fetchRecords = async (): Promise<void> => {
-    await locationsRepository.deleteAll();
     const data = await locationsRepository.getAll();
     setRecords(data);
   };
