@@ -38,7 +38,7 @@ const Home: React.FC = () => {
     );
   };
 
-  // Allow user to re-center the map
+  // TODO: Allow user to re-center the map
   const recenterMap = async (): Promise<void> => {
     // TODO: Remove later
     const enabled = !trackLocation;
