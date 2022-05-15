@@ -1,16 +1,24 @@
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
+import {getDistanceFromLatLonInKm} from './getDistance';
 
-const defaultLocation = {
+// Based on the `useTracking` hook provided by @jonasgroendahl on GitHub
+
+interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+const defaultLocation: Coordinate = {
   latitude: 123,
   longitude: 456,
 };
 
 const useTracking = (isActive: boolean) => {
   const [location, setLocation] = useState(defaultLocation);
-  // const [history, setHistory] = useState<any>([]);
-  // const [distance, setDistance] = useState<number>(0);
+  const [history, setHistory] = useState<Coordinate[]>([]);
+  const [distance, setDistance] = useState<number>(0);
 
   useEffect(() => {
     if (!isActive) {
@@ -52,10 +60,33 @@ const useTracking = (isActive: boolean) => {
       }));
 
       // Set history (if applicable)
+      setHistory(prev => {
+        setDistance(prevDistance => {
+          if (prev.length === 0) {
+            return 0;
+          }
+          const latestItem = prev[prev.length - 1];
+          return (
+            prevDistance +
+            getDistanceFromLatLonInKm(
+              latestItem.latitude,
+              latestItem.longitude,
+              location.latitude,
+              location.longitude,
+            )
+          );
+        });
+
+        return prev.concat({
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+      });
 
       // Start background task (write to storage or send to graphql)
       BackgroundGeolocation.startTask(taskKey => {
         // Execute long running task here
+        console.log('Task started...');
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
       });
@@ -141,8 +172,7 @@ const useTracking = (isActive: boolean) => {
     };
   }, [location, isActive]);
 
-  // return {location, history, distance};
-  return {location};
+  return {location, history, distance};
 };
 
 export default useTracking;

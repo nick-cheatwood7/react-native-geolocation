@@ -8,13 +8,18 @@ import {Button} from '../../constants/theme';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {setOrigin} from '../../redux/reducers/locationSlice';
 
+// Location tracking
+import useTracking from '../../utils/useTracking';
+
 const Home: React.FC = () => {
   const toast = useToast();
   const origin = useAppSelector(state => state.location.origin);
   const dispatch = useAppDispatch();
+  const {location} = useTracking(true);
 
   useEffect(() => {
     setCurrentLocation();
+    console.log(location);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
