@@ -1,24 +1,27 @@
+// Based on the `useTracking` hook provided by @jonasgroendahl on GitHub
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import {getDistanceFromLatLonInKm} from './getDistance';
+import {useDatabaseConnection} from '../data/connection';
 
-// Based on the `useTracking` hook provided by @jonasgroendahl on GitHub
-
-interface Coordinate {
+interface Location {
+  timestamp: number;
   latitude: number;
   longitude: number;
 }
 
-const defaultLocation: Coordinate = {
+const defaultLocation: Location = {
+  timestamp: 123456789,
   latitude: 123,
   longitude: 456,
 };
 
 const useTracking = (isActive: boolean) => {
-  const [location, setLocation] = useState(defaultLocation);
-  const [history, setHistory] = useState<Coordinate[]>([]);
+  const [location, setLocation] = useState<Location>(defaultLocation);
+  const [history, setHistory] = useState<Location[]>([]);
   const [distance, setDistance] = useState<number>(0);
+  const {locationsRepository} = useDatabaseConnection();
 
   useEffect(() => {
     if (!isActive) {
@@ -78,6 +81,7 @@ const useTracking = (isActive: boolean) => {
         });
 
         return prev.concat({
+          timestamp: location.timestamp,
           latitude: location.latitude,
           longitude: location.longitude,
         });
@@ -87,6 +91,12 @@ const useTracking = (isActive: boolean) => {
       BackgroundGeolocation.startTask(taskKey => {
         // Execute long running task here
         console.log('Task started...');
+        locationsRepository.create({
+          deviceId: 'abc123',
+          latitude: location.latitude,
+          longitude: location.longitude,
+          timestamp: location.timestamp,
+        });
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
         console.log('Task ended.');
@@ -173,7 +183,7 @@ const useTracking = (isActive: boolean) => {
       console.log('Removing all listeners');
       BackgroundGeolocation.removeAllListeners();
     };
-  }, [location, isActive]);
+  }, [location, isActive, locationsRepository]);
 
   return {location, history, distance};
 };

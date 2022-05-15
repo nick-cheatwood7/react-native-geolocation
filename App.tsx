@@ -9,6 +9,9 @@ import {Button} from './src/constants/theme';
 import {store} from './src/redux/store';
 import {Provider} from 'react-redux';
 
+// Database
+import {DatabaseConnectionProvider} from './src/data/connection';
+
 // Import screens
 import {RootTabParamList} from './src/routes/RootTabParamList';
 import HomeScreen from './src/views/HomeScreen';
@@ -18,39 +21,41 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const App: React.FC = () => {
   return (
-    <Provider store={store}>
-      <NativeBaseProvider>
-        <NavigationContainer>
-          <Tab.Navigator
-            screenOptions={({route}) => ({
-              tabBarIcon: ({focused, color, size}) => {
-                let iconName = '';
-                if (route.name === 'Home') {
-                  iconName = focused ? 'home' : 'home-outline';
-                } else if (route.name === 'Info') {
-                  iconName = focused
-                    ? 'information-circle'
-                    : 'information-circle-outline';
-                }
-                // Render the icon
-                return (
-                  <Icon
-                    as={Ionicon}
-                    name={iconName}
-                    color={color}
-                    size={size}
-                  />
-                );
-              },
-              tabBarActiveTintColor: Button.Primary,
-              tabBarInactiveTintColor: Button.Muted,
-            })}>
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Info" component={InfoScreen} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </NativeBaseProvider>
-    </Provider>
+    <DatabaseConnectionProvider>
+      <Provider store={store}>
+        <NativeBaseProvider>
+          <NavigationContainer>
+            <Tab.Navigator
+              screenOptions={({route}) => ({
+                tabBarIcon: ({focused, color, size}) => {
+                  let iconName = '';
+                  if (route.name === 'Home') {
+                    iconName = focused ? 'home' : 'home-outline';
+                  } else if (route.name === 'Info') {
+                    iconName = focused
+                      ? 'information-circle'
+                      : 'information-circle-outline';
+                  }
+                  // Render the icon
+                  return (
+                    <Icon
+                      as={Ionicon}
+                      name={iconName}
+                      color={color}
+                      size={size}
+                    />
+                  );
+                },
+                tabBarActiveTintColor: Button.Primary,
+                tabBarInactiveTintColor: Button.Muted,
+              })}>
+              <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Info" component={InfoScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </NativeBaseProvider>
+      </Provider>
+    </DatabaseConnectionProvider>
   );
 };
 
