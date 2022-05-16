@@ -29,8 +29,8 @@ const useTracking = (isActive: boolean) => {
 
     BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
-      stationaryRadius: 50,
-      distanceFilter: 50,
+      stationaryRadius: 5,
+      distanceFilter: 5,
       notificationTitle: 'Background tracking',
       notificationText: 'enabled',
       startOnBoot: false,
@@ -40,16 +40,6 @@ const useTracking = (isActive: boolean) => {
       fastestInterval: 5000,
       activitiesInterval: 10000,
       stopOnStillActivity: false,
-      url: 'http://localhost:5000/graphql',
-      httpHeaders: {
-        'X-FOO': 'bar',
-      },
-      // Customize POST properties
-      postTemplate: {
-        lat: '@latitude',
-        lon: '@longitude',
-        foo: 'bar',
-      },
     });
 
     BackgroundGeolocation.on('location', loc => {
@@ -97,6 +87,7 @@ const useTracking = (isActive: boolean) => {
           longitude: location.longitude,
         });
         await db.locations.save(newLocation);
+        console.log('Location reading: ', JSON.stringify(newLocation));
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
         console.log('Task ended.');
