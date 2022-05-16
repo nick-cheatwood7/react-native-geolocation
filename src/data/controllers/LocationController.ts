@@ -63,6 +63,16 @@ export default class LocationController {
     return filteredItems;
   }
 
+  public async deleteById(id: string): Promise<void> {
+    const records = await this.findAll();
+    records.filter(location => location.id !== id);
+    try {
+      await AsyncStorage.setItem(LOCATIONS_KEY, JSON.stringify({...records}));
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   public async deleteAll(): Promise<void> {
     try {
       await AsyncStorage.removeItem(LOCATIONS_KEY);
