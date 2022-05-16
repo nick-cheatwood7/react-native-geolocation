@@ -1,23 +1,25 @@
+// Based on the `useTracking` hook provided by @jonasgroendahl on GitHub
 import {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 import {getDistanceFromLatLonInKm} from './getDistance';
+import db from '../data';
 
-// Based on the `useTracking` hook provided by @jonasgroendahl on GitHub
-
-interface Coordinate {
+interface Location {
+  timestamp: number;
   latitude: number;
   longitude: number;
 }
 
-const defaultLocation: Coordinate = {
+const defaultLocation: Location = {
+  timestamp: 0,
   latitude: 123,
   longitude: 456,
 };
 
 const useTracking = (isActive: boolean) => {
   const [location, setLocation] = useState(defaultLocation);
-  const [history, setHistory] = useState<Coordinate[]>([]);
+  const [history, setHistory] = useState<Location[]>([]);
   const [distance, setDistance] = useState<number>(0);
 
   useEffect(() => {
@@ -78,15 +80,23 @@ const useTracking = (isActive: boolean) => {
         });
 
         return prev.concat({
+          timestamp: location.timestamp,
           latitude: location.latitude,
           longitude: location.longitude,
         });
       });
 
       // Start background task (write to storage or send to graphql)
-      BackgroundGeolocation.startTask(taskKey => {
+      BackgroundGeolocation.startTask(async taskKey => {
         // Execute long running task here
         console.log('Task started...');
+        // TODO: Save location reading to db
+        const newLocation = await db.locations.create({
+          timestamp: location.timestamp,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+        await db.locations.save(newLocation);
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
         console.log('Task ended.');
@@ -126,7 +136,7 @@ const useTracking = (isActive: boolean) => {
             'Would you like to open app settings?',
             [
               {
-                text: 'Yes',
+                text: 'Settings...',
                 onPress: () => BackgroundGeolocation.showAppSettings(),
               },
               {

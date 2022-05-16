@@ -12,6 +12,7 @@ import {Provider} from 'react-redux';
 // Import screens
 import {RootTabParamList} from './src/routes/RootTabParamList';
 import HomeScreen from './src/views/HomeScreen';
+import RecentsScreen from './src/views/RecentsScreen';
 import InfoScreen from './src/views/InfoScreen';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -27,6 +28,8 @@ const App: React.FC = () => {
                 let iconName = '';
                 if (route.name === 'Home') {
                   iconName = focused ? 'home' : 'home-outline';
+                } else if (route.name === 'Recents') {
+                  iconName = focused ? 'location' : 'location-outline';
                 } else if (route.name === 'Info') {
                   iconName = focused
                     ? 'information-circle'
@@ -46,6 +49,7 @@ const App: React.FC = () => {
               tabBarInactiveTintColor: Button.Muted,
             })}>
             <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Recents" component={RecentsScreen} />
             <Tab.Screen name="Info" component={InfoScreen} />
           </Tab.Navigator>
         </NavigationContainer>
