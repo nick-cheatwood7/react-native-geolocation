@@ -74,7 +74,7 @@ const RecentsScreen = () => {
         backgroundColor={'white'}>
         <FlatList
           flex={1}
-          data={[...locations]}
+          data={[...locations.reverse()]}
           renderItem={renderItem}
           keyExtractor={item => item.id}
           alignSelf="flex-start"
