@@ -40,6 +40,7 @@ const useTracking = (isActive: boolean) => {
       fastestInterval: 5000,
       activitiesInterval: 10000,
       stopOnStillActivity: false,
+      saveBatteryOnBackground: true,
     });
 
     BackgroundGeolocation.on('location', loc => {
