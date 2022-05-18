@@ -33,6 +33,7 @@ const useTracking = (isActive: boolean) => {
       distanceFilter: 5,
       notificationTitle: 'Background tracking',
       notificationText: 'enabled',
+      notificationsEnabled: false,
       startOnBoot: false,
       stopOnTerminate: true,
       locationProvider: BackgroundGeolocation.DISTANCE_FILTER_PROVIDER,
@@ -41,6 +42,7 @@ const useTracking = (isActive: boolean) => {
       activitiesInterval: 10000,
       stopOnStillActivity: false,
       saveBatteryOnBackground: true,
+      debug: false,
     });
 
     BackgroundGeolocation.on('location', loc => {
@@ -80,7 +82,7 @@ const useTracking = (isActive: boolean) => {
       // Start background task (write to storage or send to graphql)
       BackgroundGeolocation.startTask(async taskKey => {
         // Execute long running task here
-        console.log('Task started...');
+        console.log(`Task "${taskKey}" started...`);
         // TODO: Save location reading to db
         const newLocation = await db.locations.create({
           timestamp: location.timestamp,
@@ -88,7 +90,10 @@ const useTracking = (isActive: boolean) => {
           longitude: location.longitude,
         });
         await db.locations.save(newLocation);
-        console.log('Location reading: ', JSON.stringify(newLocation));
+        console.log(
+          `[INFO (${new Date().toLocaleString()})]: `,
+          JSON.stringify(newLocation),
+        );
         // IMPORTANT: Must `end` task
         BackgroundGeolocation.endTask(taskKey);
         console.log('Task ended.');
